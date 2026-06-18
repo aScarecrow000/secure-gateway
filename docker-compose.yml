@@ -1,0 +1,20 @@
+services:
+  reverse-proxy:
+    restart: unless-stopped
+    image: nginx:alpine
+    container_name: reverse-proxy
+    ports:
+      - "8080:80"   # Maps port 8080 on your machine to 80 inside the container
+      - "8443:443"  # Maps port 8443 on your machine to 443 inside the container
+    volumes:
+      - ./html:/usr/share/nginx/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  3x-ui:
+    restart: unless-stopped
+    image: ghcr.io/mhsanaei/3x-ui:latest
+    container_name: 3x-ui
+    volumes:
+      - ./db/:/etc/x-ui/
+    environment:
+      - XRAY_VMESS_AEAD_FORCED=false
+      - XUI_INIT_WEB_BASE_PATH=/panel/
